@@ -1,5 +1,6 @@
 import gym
-from gym import error, spaces, utils
+from gym import error, utils
+from gym.spaces import Box
 from gym.utils import seeding
 
 import numpy as np
@@ -29,23 +30,23 @@ class LQREnv(gym.Env):
     @property
     def action_space(self):
         return Box(
-            low=-10,
-            high=10,
+            low=-self.u_bound,
+            high=self.u_bound,
             shape=(1,),
             dtype=np.float32)
 
     @property
     def observation_space(self):
         return Box(
-            low=-10,
-            high=10,
+            low=-self.state_bound,
+            high=self.state_bound,
             shape=(2,),
             dtype=np.float32)
 
     def step(self, action):
         done = self.time_step >= self.horizon
         self.state = self.A @ self.state + self.B @ action  # Ax+Bu
-        loss = self.state.T@Q@self.state + action.T@R@action  # xTQx+uTRu
+        loss = self.state.T @ self.Q @ self.state + action.T * self.R * action  # xTQx+uTRu
         reward = -loss
 
 
