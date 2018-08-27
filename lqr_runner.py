@@ -12,7 +12,7 @@ def env_creator(env_config):
     return gym.make("LQREnv-v0")  # or return your own custom env
 
 if __name__ == "__main__":
-    ray.init(num_cpus=1, redirect_output=True)
+    ray.init(num_cpus=2, redirect_output=True)
 
     config = ppo.DEFAULT_CONFIG.copy()
     config["num_workers"] = 1
@@ -42,11 +42,6 @@ if __name__ == "__main__":
             "max_failures": 999,
             "stop": {
                 "training_iteration": 200,
-            },
-            "trial_resources": {
-                "cpu": 1,
-                "gpu": 0,
-                "extra_cpu": 0,
             },
         },
     })
