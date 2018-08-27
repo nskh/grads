@@ -7,6 +7,10 @@ import ray.rllib.ppo as ppo
 from ray.tune import run_experiments
 from ray.tune.registry import register_env
 
+def env_creator(env_config):
+    register(id='LQREnv-v0', entry_point='gym_lqr.envs:LQREnv')
+    return gym.make("LQREnv-v0")  # or return your own custom env
+
 if __name__ == "__main__":
     ray.init(num_cpus=1, redirect_output=True)
 
@@ -23,13 +27,9 @@ if __name__ == "__main__":
     config["horizon"] = 10
 
     env_name = 'LQREnv-v0'
-
-    # register(id='LQREnv-v0', entry_point='gym_lqr.envs:LQREnv')
-
-    create_env = lambda *_: gym.envs.make(env_name)
     
     # Register as rllib env
-    register_env(env_name, create_env)
+    register_env(env_name, env_creator)
 
     trials = run_experiments({
         'lqr_env_test': {

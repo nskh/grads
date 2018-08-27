@@ -21,7 +21,7 @@ class LQREnv(gym.Env):
         self.R = np.array([1.])
 
         self.state = None
-        self.state_bound = np.array([100., 100.])
+        self.state_bound = 100.
         self.u_bound = 100.
 
         self.horizon = 10
@@ -48,7 +48,8 @@ class LQREnv(gym.Env):
         self.state = self.A @ self.state + self.B @ action  # Ax+Bu
         loss = self.state.T @ self.Q @ self.state + action.T * self.R * action  # xTQx+uTRu
         reward = -loss
-
+        if len(reward) == 1:
+            reward = reward[0]
 
         self.time_step += 1 
         return self.state, reward, done, {}
